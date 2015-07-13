@@ -49,7 +49,11 @@ ID: ('a'..'z' | 'A'..'Z' | 'ñ' | 'Ñ') ('a'..'z' | 'A'..'Z' | 'ñ' | 'Ñ' | '_'
 NUMERO: (DIGITO)+ ('.' (DIGITO+))? EXPONENTE?;
 EXPONENTE: ('e' | 'E') ('+' | '-')? DIGITO+;
 DIGITO: '0'..'9';
-CADENA: '"' .*? '"'; //falta que no se inclullan las comillas en el reconocimiento
+//CADENA: '"' .*? '"'; //falta que no se inclullan las comillas en el reconocimiento
+
+COLORHTML: '#' HEX HEX HEX HEX HEX HEX;
+HEX: ('a'..'f' | 'A'..'F' | '0'..'9');
+
 
 NUEVA_LINEA: ('\n' | '\r') ->skip;
 ESPACIOS_BLANCOS: (' ' | '\t') ->skip;
@@ -165,14 +169,14 @@ expresion returns [TiposDeDatos retorno] :
 				{
 					if($op.type == MULTIPLICACION)
 						$retorno = $Amd.retorno.operacionMultiplicar($Bmd.retorno);
-					else
+					else if($op.type == DIVICION)
 						$retorno = $Amd.retorno.operacionDividir($Bmd.retorno);
 				}
 				| op=(SUMA | RESTA) expNegado=expresion
 				{
 					if($op.type == RESTA)
 						$retorno = $expNegado.retorno.operacionNegado();
-					else if ($op.type==SUMA)
+					else if ($op.type == SUMA)
 						$retorno = $expNegado.retorno;
 				}
 				| Adr=expresion op=DEREF Bdr=expresion
@@ -184,6 +188,7 @@ expresion returns [TiposDeDatos retorno] :
 				| a=VERDADERO {$retorno = new Logico(true);}
 				| a=FALSO {$retorno = new Logico(false);}
 				| a=COLOR {$retorno = new Tinte($a.text);}
+				| a=COLORHTML {$retorno = Tinte.obtenerColorHtml($a.text);}
 				| a=FORMA {$retorno = new Forma($a.text);}
 				| id //creo que hay que eliminarlo o colocar ID en su lugar ya que la dereferencia se resuelve arriba
 				| llamadaFuncion

@@ -29,6 +29,12 @@ public class Tinte extends TiposDeDatos
 		this.color = color;
 	}
 	
+	public static Tinte obtenerColorHtml(String color)
+	{
+		String aux = color.replaceAll("#", "");
+		return new Tinte(new Color(Integer.parseInt(aux, 16)));
+	}
+	
 	private Color convertirCadenaColor(String color)
 	{
 		if(color.equalsIgnoreCase("rojo")) return Color.RED;
