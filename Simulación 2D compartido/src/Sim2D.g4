@@ -136,8 +136,19 @@ expresion returns [TiposDeDatos retorno] :
 				| expresion op=(IGUAL | DIFERENTE | MENOR | MAYOR | MAYORIGUAL | MENORIGUAL) expresion
 				| expresion op=(SUMA | RESTA) expresion
 				| expresion op=(MULTIPLICACION | DIVICION) expresion
-				| op=(SUMA | RESTA) expresion
-				| expresion op=DEREF expresion
+				| op=(SUMA | RESTA) expNegado=expresion
+				{
+					if($op.type==RESTA)
+					{
+						if($expNegado.retorno instanceof Decimal)
+							$retorno = ((Decimal)$expNegado.retorno).operacionNegado();
+						else if($expNegado.retorno instanceof Entero)
+							$retorno = ((Entero)$expNegado.retorno).operacionNegado();
+						else 
+							Mensaje.imprimir("Error no se puede negar el tipo de dato: " + $expNegado.retorno.tipoDeDato() + " Contiene: " + $expNegado.retorno, Mensaje.ERROR);
+					}
+				}
+				//| expresion op=DEREF expresion
 				| a=NUMERO {$retorno = interprete.convertirCadenaNumero($a.text);}
 				| a=VERDADERO {$retorno = new Logico(true);}
 				| a=FALSO {$retorno = new Logico(false);}
