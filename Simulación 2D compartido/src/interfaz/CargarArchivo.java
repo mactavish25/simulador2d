@@ -2,7 +2,6 @@ package interfaz;
 
 import java.io.IOException;
 
-import gramatica.Sim2DBaseListener;
 import gramatica.Sim2DLexer;
 import gramatica.Sim2DParser;
 
@@ -39,8 +38,8 @@ public class CargarArchivo
 			Sim2DLexer lexico = new Sim2DLexer(archivoEntrada);
 			CommonTokenStream simbolos = new CommonTokenStream(lexico);
 			Sim2DParser analisisSintactico = new Sim2DParser(simbolos);
-			analisisSintactico.setBuildParseTree(true);
-			analisisSintactico.addParseListener(new Sim2DBaseListener());
+			//analisisSintactico.setBuildParseTree(true);
+			//analisisSintactico.addParseListener(new Sim2DBaseListener());
 			analisisSintactico.archivo();//Inicia el analisis
 			//ParseTree arbol = analisisSintactico.archivo();
 			//System.out.println("Arbol: "+arbol.toStringTree(analisisSintactico));
