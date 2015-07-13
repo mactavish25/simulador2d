@@ -106,7 +106,7 @@ llamadaFuncion: ID argumento; //identificador(exprecion)
 argumento: PARENTESIS_IZQ lista_argumento? PARENTESIS_DER;
 lista_argumento: expresion (COMA expresion)*;
 
-id: ID (DEREF ID)*;
+id: ID (DEREF ID)*;//Variable o dereferencia ej: velocidad o objeto.velocidad
 /* 
 expresion: and (op=O and)*;
 and: comparadores (op=Y comparadores)*;
@@ -130,25 +130,61 @@ constante returns [TiposDeDatos retorno]:
 */
 
 expresion returns [TiposDeDatos retorno] :
-				PARENTESIS_IZQ expresion PARENTESIS_DER
-				| expresion op=O expresion
-				| expresion op=Y expresion
-				| expresion op=(IGUAL | DIFERENTE | MENOR | MAYOR | MAYORIGUAL | MENORIGUAL) expresion
-				| expresion op=(SUMA | RESTA) expresion
-				| expresion op=(MULTIPLICACION | DIVICION) expresion
+				PARENTESIS_IZQ App=expresion PARENTESIS_DER {$retorno = $App.retorno;}
+				| Ao=expresion op=O Bo=expresion
+				{
+					$retorno = ((Logico)$Ao.retorno).operadorO($Bo.retorno);
+				}
+				| Ay=expresion op=Y By=expresion
+				{
+					$retorno = ((Logico)$Ay.retorno).operadorY($By.retorno);
+				}
+				| Acom=expresion op=(IGUAL | DIFERENTE | MENOR | MAYOR | MAYORIGUAL | MENORIGUAL) Bcom=expresion
+				{
+					if($op.type == IGUAL)
+						$retorno = $Acom.retorno.compararIgual($Bcom.retorno);
+					else if($op.type == DIFERENTE)
+						$retorno = $Acom.retorno.compararDistinto($Bcom.retorno);
+					else if($op.type == MENOR)
+						$retorno = $Acom.retorno.compararMenor($Bcom.retorno);
+					else if($op.type == MAYOR)
+						$retorno = $Acom.retorno.compararMayor($Bcom.retorno);
+					else if($op.type == MAYORIGUAL)
+						$retorno = $Acom.retorno.compararMayorIgual($Bcom.retorno);
+					else if($op.type == MENORIGUAL)
+						$retorno = $Acom.retorno.compararMenorIgual($Bcom.retorno);
+				}
+				| Asr=expresion op=(SUMA | RESTA) Bsr=expresion
+				{
+					if($op.type == SUMA)
+						$retorno = $Asr.retorno.operacionSuma($Bsr.retorno);
+					else
+						$retorno = $Asr.retorno.operacionResta($Bsr.retorno);
+				}
+				| Amd=expresion op=(MULTIPLICACION | DIVICION) Bmd=expresion
+				{
+					if($op.type == MULTIPLICACION)
+						$retorno = $Amd.retorno.operacionMultiplicar($Bmd.retorno);
+					else
+						$retorno = $Amd.retorno.operacionDividir($Bmd.retorno);
+				}
 				| op=(SUMA | RESTA) expNegado=expresion
 				{
-					if($op.type==RESTA)
+					if($op.type == RESTA)
 						$retorno = $expNegado.retorno.operacionNegado();
 					else if ($op.type==SUMA)
 						$retorno = $expNegado.retorno;
 				}
-				| expresion op=DEREF expresion
+				| Adr=expresion op=DEREF Bdr=expresion
+				{
+					Objeto ob = (Objeto)interprete.obtenerVariable($Adr.text);
+					$retorno = ob.obtenerAtributo($Bdr.text);
+				}
 				| a=NUMERO {$retorno = interprete.convertirCadenaNumero($a.text);}
 				| a=VERDADERO {$retorno = new Logico(true);}
 				| a=FALSO {$retorno = new Logico(false);}
 				| a=COLOR {$retorno = new Tinte($a.text);}
 				| a=FORMA {$retorno = new Forma($a.text);}
-				| id
+				| id //creo que hay que eliminarlo o colocar ID en su lugar ya que la dereferencia se resuelve arriba
 				| llamadaFuncion
 				;
