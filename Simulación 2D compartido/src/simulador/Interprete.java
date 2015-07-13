@@ -43,7 +43,6 @@ public class Interprete
 	
 	public void finalizarAsignacionObjeto()
 	{
-		//objetoTemporal.establecerNombre(nombre);
 		//Agrega los atributos que son necesarios y no fueron introducidos
 		objetoTemporal.agregarAtributosInternos();
 		tabla_datos.agregar(objetoTemporal);
@@ -109,6 +108,31 @@ public class Interprete
 			objetoTemporal.agregarAtributo(temporal);
 		}
 	}
+	public TiposDeDatos obtenerVariable(String nombre)
+	{
+		TiposDeDatos nuevo = this.tabla_datos.obtener(nombre);
+		if(this.modo_definiendo_objeto)
+		{
+			//if(nuevo == null) return new TiposDeDatos(nombre);
+			//else Mensaje.imprimir("Ya existe una variable con el nombre "+ nombre, Mensaje.ERROR);
+		}
+		else
+		{
+			if(nuevo == null) Mensaje.imprimir("Variable u objeto desconocido", Mensaje.ERROR);
+		}
+		return nuevo;
+	}
+	/*
+	public TiposDeDatos obtenerVariable(String nombre)
+	{
+		TiposDeDatos variableGuardada = this.tabla_datos.obtener(nombre);
+		if(!this.modo_definiendo_objeto)
+		{
+			if(variableGuardada == null) Mensaje.imprimir("Variable desconocida", Mensaje.ERROR);
+			else return variableGuardada;
+		}
+		return null;
+	}*/
 	/*
 	public TiposDeDatos convertirCadenaVariable(String nombre, String texto)
 	{
