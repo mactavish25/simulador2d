@@ -1,6 +1,6 @@
 package simulador;
 
-public class TiposDeDatos
+public abstract class TiposDeDatos
 {
 	private String nombre;
 	
@@ -26,21 +26,29 @@ public class TiposDeDatos
 		return this.nombre;
 	}
 	
-	//Funcioines
-	public TiposDeDatos copiar()
-	{
-		return new TiposDeDatos(this.obtenerNombre());
-	}
+	
 	
 	public void error(String error)
 	{
 		System.out.println("Error tipo de dato: " + error);
 	}
 	
-	public String tipoDeDato()
-	{
-		return "desconocido";
-	}
+	//Funcioines Abstractas
+	public abstract TiposDeDatos operacionAsignar(TiposDeDatos dato);
+	public abstract TiposDeDatos operacionSuma(TiposDeDatos dato);
+	public abstract TiposDeDatos operacionResta(TiposDeDatos dato);
+	public abstract TiposDeDatos operacionMultiplicar(TiposDeDatos dato);
+	public abstract TiposDeDatos operacionDividir(TiposDeDatos dato);
+	public abstract TiposDeDatos operacionModulo(TiposDeDatos dato);
+	public abstract TiposDeDatos operacionNegado();
+	public abstract TiposDeDatos compararIgual(TiposDeDatos dato);
+	public abstract TiposDeDatos compararDistinto(TiposDeDatos dato);
+	public abstract TiposDeDatos compararMayor(TiposDeDatos datos);
+	public abstract TiposDeDatos compararMayorIgual(TiposDeDatos datos);
+	public abstract TiposDeDatos compararMenor(TiposDeDatos datos);
+	public abstract TiposDeDatos compararMenorIgual(TiposDeDatos datos);
+	public abstract TiposDeDatos copiar();
+	public abstract String tipoDeDato();
 	
 	public String toString()
 	{
